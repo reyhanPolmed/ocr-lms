@@ -21,10 +21,12 @@ ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 ENV PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
-    python3-pip \
+    python3-venv \
     python-is-python3 \
     libglib2.0-0 \
     libgl1 \
@@ -34,8 +36,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
+RUN python3 -m venv /opt/venv
+
 COPY requirements.txt ./requirements.txt
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/static ./.next/static
